@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+
+
+<body>
+    <form enctype="multipart/form-data">
+        <input type="file" name="file" class="file-upload-input" accept="image/gif, image/png, image/jpeg, image/jpg">
+        <input type="text" name="formData">
+    </form>
+    <img class="file-preview" src="" alt="">
+
+    <script>
+        const fileInput = document.querySelector(".file-upload-input");  //첨부파일 버튼
+
+        fileInput.onchange = () => { //선택된 내용이 바뀌면
+            getPreview();            //getPreview 실행
+            if (confirm("이미지 데이터 전송을 하시겠습니까?")) {
+                request();
+            }
+        }
+
+        function getPreview() {
+            const reader = new FileReader();  //reader 객체 생성
+            reader.onload = (e) => {          // reader.readAsDataURL(fileInput.files[0]);가 실행되면 onload도 실행됨
+                const filePreview = document.querySelector(".file-preview");
+                filePreview.src = e.target.result;  //result값이 src 경로
+            }
+
+            reader.readAsDataURL(fileInput.files[0]);  //i번째 이미지파일이 (e)로 들어감
+        }
+
+        function getFormData() {
+            const form = document.querySelector("form");
+
+            const formData = new FormData(form);
+
+            //데이터 추가하는 방법
+            formData.append("title", "폼데이터 제목");
+            formData.append("writer", "HDH");
+            formData.append("content", "파일을 포함한 게시글");
+            for (let pair of formData.entries()) {
+                console.log(`key: ${pair[0]}, value: ${pair[1]}`);  //pari는 리스트
+            }
+
+            return formData;
+        }
+        function request() {
+            $.ajax({
+                async: false,
+                type: "post",
+                url: "/api/v1/file/post",
+                enctype: "multipart/form-data", //폼데이터 전송할때 필수
+                contentType: false,             //폼데이터 전송할때 필수
+                processData: false,             //폼데이터 전송할때 필수
+                data: getFormData(),
+                dataType: "json",
+                success: (response) => {  //response: CMRespDto
+                    console.log(response);
+                    appendData(response);
+                },
+                error: (error) => {
+                    console.log(error);
+                }
+
+            });
+        }
+
+        function appendData(response) {
+            const body = document.querySelector("body");
+
+            body.innerHTML += `
+                        <h2>${response.code}</h2>
+                        <h2>${response.msg}</h2>
+                        <h2>${response.data[0]}</h2>
+                    `;
+        }
+
+    </script>
+</body>
+
+</html>

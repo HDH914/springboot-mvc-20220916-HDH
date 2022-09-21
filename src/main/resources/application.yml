@@ -4,6 +4,11 @@ server:
 
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB     # 파일의 최대 사이즈를 설정(한 파일 사이즈)
+      max-request-size: 10MB  # request 파일 최대 사이즈(전체 파일 사이즈)
+
   thymeleaf:
     #ViewResolver가 경로설정을 도와줌(prefix:앞, suffix:뒤)
     prefix: classpath:templates/    #classpath는 resource폴더를 찾아감

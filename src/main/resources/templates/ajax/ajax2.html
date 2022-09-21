@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+
+<body>
+
+
+    <script>
+
+        /**
+        window.onload = () =>{
+            request();
+        }
+        */
+
+        load();
+
+        function load() {
+            request();
+        }
+
+        function request() {
+            $.ajax({
+                async: false,
+                type: "post",
+                url: "/api/v1/dto/post",
+                data: {
+                    "title": "DTO 제목",
+                    "writer": "하덕현",
+                    "content": "내용을 입력합니다."
+                },
+                dataType: "json",
+                success: (response) => {  //response: CMRespDto
+                    console.log(response);
+                    appendData(response);
+                },
+                error: (error) => {
+                    console.log(error);
+                }
+
+            });
+        }
+
+        function appendData(response) {
+            const body = document.querySelector("body");
+
+            body.innerHTML = `
+                        <h2>${response.code}</h2>
+                        <h2>${response.msg}</h2>
+                        <h2>${response.data.title}</h2>
+                        <h2>${response.data.writer}</h2>
+                        <h2>${response.data.content}</h2>
+                    `;
+        }
+
+    </script>
+</body>
+
+</html>
